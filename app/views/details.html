@@ -1,0 +1,39 @@
+<!--<h4>Country Data</h4>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officia deleniti nemo doloribus, id veniam magni corporis, dolor dignissimos iste esse debitis maxime quis eos. Nisi cum fuga neque, labore ea. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nam veritatis, ad, iste culpa natus ullam repellendus explicabo pariatur voluptatum velit necessitatibus eum voluptatem numquam error illo corporis minus dolorem. Tempore.</p>-->
+
+<div class="content">
+
+    <div>
+        <h2>{{country.countryName}}</h2>
+        <div class="details-box">
+            <div><h4>Details<h4></div>
+            <dl>
+                <dt>Population of Country: </dt>
+                <dd>{{country.population | number}}</dd>
+                
+                <dt>Area (km<sup>2</sup>): </dt>
+                <dd>{{country.areaInSqKm | number}}</dd>
+
+                <dt>Capital: </dt>
+                <dd>{{country.capital}}</dd>
+
+                <dt>Population of Capital : </dt>
+                <dd>{{capitalPopulation | number}}</dd>
+
+                <dt>Continent: </dt>
+                <dd>{{country.continentName}}</dd>
+
+                <dt>{{neighbors.length}} neighbors: </dt>
+                <dd>
+                    <ul ng-repeat="neighbor in neighbors">
+                        <li><a ng-click="getCountryData($index)" ng-href="#/countries/:{{ neighbor.countryCode | uppercase }}">{{ neighbor.countryName }}</a></li>
+                    </ul>
+                </dd>
+            </dl>
+        </div> 
+    </div> 
+
+</div>
+
+<a href="#/home"><div class="button">Back to Home</div></a>
+<a href="#/countries"><div class="button">Back to Countries</div></a>
