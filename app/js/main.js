@@ -1,4 +1,4 @@
-var app = angular.module('ccApp', ['ngRoute', 'ngAnimate','smart-table']);
+var app = angular.module('ccApp', ['ngRoute', 'ngAnimate','anguFixedHeaderTable']);
 
 app.config(['$locationProvider','$routeProvider', function($locationProvider, $routeProvider) {
     $routeProvider
@@ -29,7 +29,7 @@ app.controller('homeController', ['$scope', function($scope) {
   }
 ]);
 
-app.controller('countriesController', ['$scope','countryData', '$q', function($scope, countryData, $q) {
+app.controller('countriesController', ['$scope','$location','$filter','countryData', '$q', function($scope, $location, $filter, countryData, $q) {
     var toString = Object.prototype.toString;
     
     //checking to see if API call returned any data    
@@ -41,52 +41,75 @@ app.controller('countriesController', ['$scope','countryData', '$q', function($s
     $scope.countries = countryData.countries;
     });
 
-    //function to get the index and country code for the current selection and store it in the countryData factory//
-    $scope.getCountryData = function(index){
-        countryData.currentCountry = countryData.countries[index];
-        countryData.currentCountryCode = countryData.currentCounty.countryCode;
-        countryData.currentIndex = index;
+    $scope.showDetail = function(country) {
+      $location.path('/countries/'+country.countryCode);
     };
 
-  }]);
+    var orderBy = $filter('orderBy');
+
+    angular.forEach($scope.countries, function (country) {
+      country.areaInSqKm = parseFloat(country.areaInSqKm);
+      country.population = parseFloat(country.population);
+    });
+
+    $scope.order = function(predicate, reverse) {
+      $scope.countries = orderBy($scope.countries, predicate, reverse);
+     };
+    $scope.order('-country.countryName',false);
 
 
 
-app.controller('detailsController', ['$scope','countryData',function($scope, countryData) {
+    // $scope.sortType = 'countryName'; //default sort type
+
+
+    $scope.startsWith = function (actual, expected) {
+      var lowerStr = (actual + "").toLowerCase();
+      return lowerStr.indexOf(expected.toLowerCase()) === 0;
+  }
+
+
+}]);
+
+
+
+app.controller('detailsController', ['$scope','$route','countryData',function($scope,$route, countryData) {
   
-    $scope.country = countryData.currentCountry;
-    countryData.getCapitals($scope.country.countryCode).then(function(result){
+    
+    countryData.getCountry($route.current.params.countryCode).then(function(result){
+      $scope.country=result[0];
+      console.log($scope.country);
+    });
+
+
+    countryData.getCapitals($route.current.params.countryCode).then(function(result){
       $scope.capital = result;
       $scope.capitalPopulation = $scope.capital.population;
     });
-    countryData.getNeighbors($scope.country.countryCode).then(function(result){
+
+    countryData.getNeighbors($route.current.params.countryCode).then(function(result){
       $scope.neighbors = result.geonames;
-      console.log($scope.neighbors);
     });
 
-    $scope.getCountryData = function(index){
-      countryData.currentCountry = countryData.countries[index];
-      countryData.currentIndex = index;
-    };
-    
+    $scope.flag = $route.current.params.countryCode.toLowerCase();
+    $scope.map = $route.current.params.countryCode;
+
 }]);
 
 
 //Making data object accessible for diff sections of the app//
 app.factory('countryData', ['dataFactory', function(dataFactory) {
         var countryData = {};
-
-        var currentCountry = {};
   
         countryData.countries = dataFactory.getCountries();
+        countryData.getCountry = dataFactory.getCountry;
         countryData.getCapitals = dataFactory.getCapitals;
         countryData.getNeighbors = dataFactory.getNeighbors;
-        return countryData;  
+        return countryData;        
 }]);
 
 
-//Factory of functions to get data of countries from geonames HTTP call//
-app.factory('dataFactory',['$http', '$q',function($http, $q){
+//Factory of API calls to geonames//
+app.factory('dataFactory',['$http', '$route', '$q',function($http,$route, $q){
 
         var username = "toc5012";
         var urlBase = "http://api.geonames.org/";
@@ -110,22 +133,41 @@ app.factory('dataFactory',['$http', '$q',function($http, $q){
 
               .success(function(data, status, headers, config) {
                   if(typeof data.status == 'object') {
-                      alert("Encountered and error requesting country data: \r\n'" +
-                          data.status.message + "'");
+                      alert("Error'" + data.status.message + "'");
                       defer.reject(data.status);
                   } else {
-                      //index of the country in the countries array.
-                      data.index = {};
-                      for (i=0; i<data.geonames.length; i++) {
-                          data.index[data.geonames[i].countryCode]=i;
-                      }
-                      //Return both the index object and countries array:
                       defer.resolve(data);
                   }
               })
 
               .error(function(data, status, headers, config) {
                   alert(status + " error attempting to access geonames.org.");
+                  defer.reject();
+              });
+              return defer.promise;
+          },
+
+          getCountry: function(countryCode) {
+              var defer = $q.defer();
+              var url = urlBase + "countryInfoJSON";
+              var request = {
+                  callback: 'JSON_CALLBACK',
+                  country: countryCode,
+                  username: username
+              };
+
+              $http({
+                  method: 'JSONP',
+                  url: url,
+                  params: request,
+                  cache: true
+              })
+              .success(function(data, status, headers, config) {
+                  defer.resolve(data.geonames);
+              })
+
+              .error(function(data, status, headers, config) {
+                  alert(status + " error attempting to get country from geonames.org.");
                   defer.reject();
               });
               return defer.promise;

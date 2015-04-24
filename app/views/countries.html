@@ -1,17 +1,37 @@
 <div class="content">
 
-	<table class="table">
+	<label id="table-search">Search by Country Name: <input ng-model="search.countryName"></label>
+
+	<table class="table table-striped table-hover" fixed-header>
 		<thead class="header">
-	        <th>Name</th>
-	        <th>Country Code</th>
-	        <th>Capital</th>
-	        <th>Area in km<sup>2</sup></th>
-	        <th>Population</th>
-	        <th>Continent</th>
+		        <th ng-click="reverse=!reverse;order('countryName', reverse)">Name
+		        	<!--<span id="arrow" ng-show="sortType == 'countryName' && !sortReverse" class="fa fa-caret-down"></span>
+        			<span id="arrow" ng-show="sortType == 'countryName' && sortReverse" class="fa fa-caret-up"></span>-->
+		        </th>
+		        <th ng-click="reverse=!reverse;order('countryCode', reverse)">Country Code
+		        	<!--<span id="arrow" ng-show="sortType == 'countryCode' && !sortReverse" class="fa fa-caret-down"></span>
+        			<span id="arrow" ng-show="sortType == 'countryCode' && sortReverse" class="fa fa-caret-up"></span>-->
+		        </th>
+		        <th ng-click="reverse=!reverse;order('capital', reverse)">Capital
+		        	<!--<span id="arrow" ng-show="sortType == 'capital' && !sortReverse" class="fa fa-caret-down"></span>
+        			<span id="arrow" ng-show="sortType == 'capital' && sortReverse" class="fa fa-caret-up"></span>-->
+		        </th>
+		        <th href="" ng-click="reverse=!reverse;order('areaInSqKm', reverse)">Area in km<sup>2</sup>
+		        	<!--<span id="arrow" ng-show="sortType == 'areaInSqKm' && !sortReverse" class="fa fa-caret-down"></span>
+        			<span id="arrow" ng-show="sortType == 'areaInSqKm' && sortReverse" class="fa fa-caret-up"></span>-->
+		        </th>
+		        <th href="" ng-click="reverse=!reverse;order('population', reverse)">Population
+		        	<!--<span id="arrow" ng-show="sortType == 'population' && !sortReverse" class="fa fa-caret-down"></span>
+        			<span id="arrow" ng-show="sortType == 'population' && sortReverse" class="fa fa-caret-up"></span>-->
+		        </th>
+		        <th ng-click="reverse=!reverse;order('continentName', reverse)">Continent
+		        	<!--<span id="arrow" ng-show="sortType == 'continentName' && !sortReverse" class="fa fa-caret-down"></span>
+        			<span id="arrow" ng-show="sortType == 'continentName' && sortReverse" class="fa fa-caret-up"></span>-->
+		        </th>
 	     </thead>
 	     <tbody class="table-body">
-	     	<tr ng-repeat="country in countries">
-	     		<td><a ng-href="#/countries/:{{country.countryCode}}" ng-click="getCountryData($index)">{{country.countryName}}</a></td>
+	     	<tr ng-repeat="country in countries | filter:search:startsWith" ng-click="showDetail(country)">
+	     		<td><a class="country-name" ng-href="#/countries/{{country.countryCode}}">{{country.countryName}}</a></td>
 	     		<td>{{country.countryCode}}</td>
 	     		<td>{{country.capital}}</td>
 	     		<td>{{country.areaInSqKm | number}}</td>
@@ -23,6 +43,6 @@
 
 </div>
 
-<a href="#/home"><div class="button">Back to Home</div></a>
+<a class="white" href="#/home"><div class="button">Back to Home</div></a>
 
 
