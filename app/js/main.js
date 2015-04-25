@@ -1,24 +1,28 @@
-var app = angular.module('ccApp', ['ngRoute', 'ngAnimate','anguFixedHeaderTable']);
+var app = angular.module('ccApp', ['ngRoute', 'ngAnimate']);
 
-app.config(['$locationProvider','$routeProvider', function($locationProvider, $routeProvider) {
+app.config(['$locationProvider','$routeProvider', 
+  function($locationProvider, $routeProvider) {
     $routeProvider
       .when("/home", {
         templateUrl: "./views/home.html",
-        controller: "homeController"
+        controller: "homeController",
       })
+
       .when("/countries", {
         templateUrl: "./views/countries.html",
-        controller: "countriesController"
+        controller: "countriesController",
       })
+
       .when("/countries/:countryCode", {
         templateUrl: "./views/details.html",
-        controller: "detailsController"
+        controller: "detailsController",
       })
+
       .otherwise({
          redirectTo: '/home'
       });
-  }
-]);
+}]);
+
 
 app.controller('mainController', ['$scope','countryData', function($scope, countryData) {
   }
@@ -30,6 +34,8 @@ app.controller('homeController', ['$scope', function($scope) {
 ]);
 
 app.controller('countriesController', ['$scope','$location','$filter','countryData', '$q', function($scope, $location, $filter, countryData, $q) {
+    'use strict';
+
     var toString = Object.prototype.toString;
     
     //checking to see if API call returned any data    
@@ -45,17 +51,18 @@ app.controller('countriesController', ['$scope','$location','$filter','countryDa
       $location.path('/countries/'+country.countryCode);
     };
 
-    var orderBy = $filter('orderBy');
+    
+    $scope.predicate = 'countryName';
+    $scope.reverse=false;
 
-    angular.forEach($scope.countries, function (country) {
-      country.areaInSqKm = parseFloat(country.areaInSqKm);
-      country.population = parseFloat(country.population);
-    });
+    $scope.convertNumbers = function(){
+      angular.forEach($scope.countries, function (country) {
+        country.areaInSqKm = parseFloat(country.areaInSqKm);
+        country.population = parseFloat(country.population);
+      });
+    };
 
-    $scope.order = function(predicate, reverse) {
-      $scope.countries = orderBy($scope.countries, predicate, reverse);
-     };
-    $scope.order('-country.countryName',false);
+    $scope.convertNumbers();
 
 
 

@@ -23,8 +23,9 @@
                     <dd>{{country.continentName}}</dd>
 
                     <dt>{{neighbors.length}} neighbors: </dt>
-                    <dd>
-                        <ul ng-repeat="neighbor in neighbors">
+                    <br><br>
+                    <dd id="neighbors-list-dd">
+                        <ul id="neighbors-list" ng-repeat="neighbor in neighbors">
                             <li><a ng-href="#/countries/{{ neighbor.countryCode | uppercase }}">{{ neighbor.countryName }}</a></li>
                         </ul>
                     </dd>
