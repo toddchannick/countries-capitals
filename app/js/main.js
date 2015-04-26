@@ -55,14 +55,11 @@ app.controller('countriesController', ['$scope','$location','$filter','countryDa
     $scope.predicate = 'countryName';
     $scope.reverse=false;
 
-    $scope.convertNumbers = function(){
-      angular.forEach($scope.countries, function (country) {
-        country.areaInSqKm = parseFloat(country.areaInSqKm);
-        country.population = parseFloat(country.population);
-      });
-    };
+    angular.forEach($scope.countries, function (country) {
+      country.areaInSqKm = parseInt(country.areaInSqKm);
+      country.population = parseInt(country.population);
+    });
 
-    $scope.convertNumbers();
 
 
 
