@@ -1,9 +1,6 @@
 {
   "name": "countries-capitals",
   "version": "0.0.0",
-  "authors": [
-    "Todd Channick <toc5012@gmail.com>"
-  ],
   "description": "Countries and Capitals App for Thinkful.",
   "license": "MIT",
   "ignore": [
