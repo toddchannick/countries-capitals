@@ -2,11 +2,12 @@
 var gulp = require('gulp');
 
 // plugins
-var connect = require('gulp-connect');
-var jshint = require('gulp-jshint');
-var uglify = require('gulp-uglify');
-var minifyCSS = require('gulp-minify-css');
-var clean = require('gulp-clean');
+var connect = require('gulp-connect'),
+    jshint = require('gulp-jshint'),
+    uglify = require('gulp-uglify'),
+    minifyCSS = require('gulp-minify-css'),
+    del = require('del');
+
 
 // tasks
 gulp.task('lint', function() {
@@ -16,25 +17,20 @@ gulp.task('lint', function() {
     .pipe(jshint.reporter('fail'));
 });
 
-gulp.task('clean', function() {
-    gulp.src('./dist/*')
-      .pipe(clean({force: true}));
+gulp.task('clean', function(cb) {
+  del(['./dist'], cb);
 });
 
 gulp.task('minify-css', function() {
   var opts = {comments:true,spare:true};
   gulp.src(['./app/**/*.css', '!./app/bower_components/**'])
     .pipe(minifyCSS(opts))
-    .pipe(gulp.dest('./dist/'))
+    .pipe(gulp.dest('./dist/'));
 });
 
 gulp.task('minify-js', function() {
   gulp.src(['./app/**/*.js', '!./app/bower_components/**'])
-    .pipe(uglify({
-      // inSourceMap:
-      // outSourceMap: "app.js.map"
-    }))
-    .pipe(gulp.dest('./dist/'))
+    .pipe(gulp.dest('./dist/'));
 });
 
 gulp.task('copy-bower-components', function () {
