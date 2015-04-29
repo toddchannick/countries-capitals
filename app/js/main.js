@@ -5,7 +5,7 @@ angular.module('ccApp', ['DataServices', 'Data', 'ngRoute', 'ngAnimate'])
     $routeProvider
       .when("/home", {
         templateUrl: "./partials/home.html",
-        controller: "homeController",
+        controller: "",
       })
       .when("/countries", {
         templateUrl: "./partials/countries.html",

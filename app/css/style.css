@@ -217,6 +217,18 @@ a.white {
 	margin-bottom:-.5em;
 }
 
+.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: #F2F2F2 !important;
+}
+
+.table-striped > tbody > tr:nth-of-type(even) {
+  background-color: #f9f9f9 !important;
+}
+
+.table-hover > tbody > tr:hover {
+  background-color:#CCEBBB !important;
+}
+
 #table-header {
 	position:relative;
 	width:100%;
